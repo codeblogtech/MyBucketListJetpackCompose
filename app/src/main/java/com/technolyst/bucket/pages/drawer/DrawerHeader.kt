@@ -1,26 +1,44 @@
 package com.technolyst.bucket.pages.drawer
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.technolyst.bucket.dataStore
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
 fun DrawerHeader() {
+
+    val context = LocalContext.current
+    val userNameKey = stringPreferencesKey("user_name")
+
+    val userName = flow<String> {
+        context.dataStore.data.map {
+            it[userNameKey]
+        }.collect(collector = {
+            if (it != null) {
+                this.emit(it)
+            }
+        })
+
+    }.collectAsState(initial = "")
+
 
     Column(
         modifier = Modifier
@@ -30,7 +48,7 @@ fun DrawerHeader() {
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Prashant Goyal",
+            text = userName.value,
             fontSize = TextUnit(18F, TextUnitType.Sp),
             color = Color.Black,
         )

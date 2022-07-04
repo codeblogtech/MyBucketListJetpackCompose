@@ -19,12 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.navigation.NavHostController
 import com.technolyst.bucket.dataStore
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun WelcomePage() {
+fun WelcomePage(navController: NavHostController?) {
 
     var inputValue = rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
@@ -64,6 +65,9 @@ fun WelcomePage() {
                             saveYourName(context, inputValue.value)
                         }
 
+                        navController?.navigate("NavigationPage")
+
+
                     },
                     modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
                 ) {
@@ -82,11 +86,12 @@ suspend fun saveYourName(context: Context, value: String) {
     context.dataStore.edit {
         it[userNameKey] = value
     }
+
 }
 
 
 @Preview
 @Composable
 fun ComposablePreview() {
-    WelcomePage()
+    WelcomePage(null)
 }
