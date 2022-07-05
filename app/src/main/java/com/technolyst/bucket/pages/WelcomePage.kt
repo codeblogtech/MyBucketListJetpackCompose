@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 fun WelcomePage(navController: NavHostController?) {
 
     var inputValue = rememberSaveable { mutableStateOf("") }
+    var bioTexValue = rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
     var scope = rememberCoroutineScope()
 
@@ -54,10 +55,20 @@ fun WelcomePage(navController: NavHostController?) {
                 },
                 placeholder = { Text(text = "Enter Your Name") }
             )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TextField(value = bioTexValue.value,
+                onValueChange = {
+                    bioTexValue.value = it
+                },
+                placeholder = { Text(text = "Enter Your Bio") }
+            )
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            if (inputValue.value.trim().isNotEmpty()) {
+            if (inputValue.value.trim().isNotEmpty()
+                && bioTexValue.value.trim().isNotEmpty()
+            ) {
                 Button(
                     onClick = {
 

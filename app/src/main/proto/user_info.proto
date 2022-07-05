@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.technolyst.bucket";
+option java_multiple_files = true;
+
+message UserInfo {
+  string user_name = 1;
+  string user_bio =2;
+}
