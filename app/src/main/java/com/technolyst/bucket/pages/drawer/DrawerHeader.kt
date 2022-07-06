@@ -17,7 +17,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.technolyst.bucket.UserInfo
 import com.technolyst.bucket.dataStore
+import com.technolyst.bucket.userInfoDataStore
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
@@ -28,6 +30,8 @@ fun DrawerHeader() {
     val context = LocalContext.current
     val userNameKey = stringPreferencesKey("user_name")
 
+    // in previous video i have show how to read data from
+    // data store preference.
     val userName = flow<String> {
         context.dataStore.data.map {
             it[userNameKey]
@@ -40,6 +44,17 @@ fun DrawerHeader() {
     }.collectAsState(initial = "")
 
 
+    //Now Read info from proto data store.
+
+    val userNameProto = flow<UserInfo> {
+        context.userInfoDataStore.data.map {
+            it
+        }.collect(collector = {
+            this.emit(it)
+        })
+    }.collectAsState(initial = null)
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth(), horizontalAlignment = Alignment.Start
@@ -47,13 +62,18 @@ fun DrawerHeader() {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(
-            text = userName.value,
-            fontSize = TextUnit(18F, TextUnitType.Sp),
-            color = Color.Black,
-        )
+        // now show data on UI.
+        userNameProto.value?.let {
+            Text(
+                text = it.userName,
+                fontSize = TextUnit(18F, TextUnitType.Sp),
+                color = Color.Black,
+            )
+        }
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = "xyz@gmail.com", fontSize = TextUnit(14F, TextUnitType.Sp), color = Color.Gray)
+        userNameProto.value?.let {
+            Text(text = it.userBio, fontSize = TextUnit(14F, TextUnitType.Sp), color = Color.Gray)
+        }
 
 
     }

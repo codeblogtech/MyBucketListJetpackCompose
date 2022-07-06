@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
 import com.technolyst.bucket.dataStore
+import com.technolyst.bucket.userInfoDataStore
 import kotlinx.coroutines.launch
 
 
@@ -73,7 +74,7 @@ fun WelcomePage(navController: NavHostController?) {
                     onClick = {
 
                         scope.launch {
-                            saveYourName(context, inputValue.value)
+                            saveYourNameAndBio(context, inputValue.value, bioTexValue.value)
                         }
 
                         navController?.navigate("NavigationPage")
@@ -90,12 +91,19 @@ fun WelcomePage(navController: NavHostController?) {
     }
 }
 
-suspend fun saveYourName(context: Context, value: String) {
+suspend fun saveYourNameAndBio(context: Context, value: String, userBio: String) {
 
     val userNameKey = stringPreferencesKey("user_name")
 
+    // it save data in data store prefernece
     context.dataStore.edit {
         it[userNameKey] = value
+    }
+
+    //Now we are going to save these two values in proto datastore
+
+    context.userInfoDataStore.updateData { currentUserInfo ->
+        currentUserInfo.toBuilder().setUserName(value).setUserBio(userBio).build()
     }
 
 }
